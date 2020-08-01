@@ -2,24 +2,17 @@
 """Simulate a football game
 
 This module implements a simulation of a football game using NFL rules.
-
-Notes
------
-The play calling decision framework is housed in the PlayCaller object, 
-while the outcomes of each event is predicted by the models in the 
-football_models file.
 """
 
 import numpy as np
 from football_drive import FootballDrive
-from football_models import *
-from football_game_mechanics import *
+from football_game_mechanics import predict_game_length, coin_toss
 
 
 class FootballGame:
     """Simulate a football game
 
-    This is an extended explanation
+    This class simulates a football game and the associated play/player level statistics
 
 
     Parameters
@@ -33,23 +26,35 @@ class FootballGame:
 
     Attributes
     ----------
-    home_team: 
-        Home team originally passed to the instance on creation.
+    home_team: team (TBI)
+        Home team 
     away_team: 
-        Away team originally passed to the instance on creation.
-    location: 
-        Location originally passed to the instance on creation.
-    score: 
+        Away team 
+    location: str
+        Location of game
+    score: list of int
         Initialized as "TBD" upon creation
-    drive_log:
-
+    drive_log: list of drive objects
+        
     Methods
     -------
     play()
         Simulate the game
+        
+
+
+    Notes
+    -----
+    A football game object is a list of football drive objects built by the play() method. The game algorithm is:
+
+        while there is time left in the game:
+            run a drive
+            update results of a drive
+            update clock
     """
 
     def __init__(self, home_team, away_team, location):
+    
         self.home_team = home_team
         self.away_team = away_team
         self.location = location
@@ -59,21 +64,16 @@ class FootballGame:
         self.drive_log = None
 
     def get_matchup(self):
+    
         return [self.home_team, self.away_team]
 
     def get_coin_toss_winner(self):
+    
         return self.get_matchup()[self.coin_winner]
 
 
     def play(self):
-        """High level description
-
-
-        Additional details of function
-
-
-        :param x: description of param xrange
-        :return: none
+        """P
         """
 
         self.__pregame()
@@ -85,17 +85,12 @@ class FootballGame:
                                           team_wo_ball = self.get_matchup()[self.defense], score = self.score)
             current_drive.run_drive()
 
-
-
             self.__update_results_of_drive(current_drive)
 
-
-            self.drive_log.append(current_drive)
             self.remain_plays -= current_drive.play_count
 
-
-
     def game_drive_summary(self):
+    
         print("\n\n         ****GAME SUMMARY****\n\n")
         print(f"Final Score: {self.home_team} - {self.score[0]}\n             {self.away_team} - {self.score[1]}")
         for drive in self.drive_log:
@@ -107,9 +102,11 @@ class FootballGame:
     # Private methods
     #
     def __get_play_count(self):
+    
         return predict_game_length()
 
     def __flip_possession(self):
+    
         self.defense = abs(self.possession)
         self.possession = abs(self.possession - 1)
 
@@ -126,24 +123,24 @@ class FootballGame:
 
     def __update_results_of_drive(self, drive):
 
+        self.drive_log.append(drive)
         turnover_types = ["turnover on downs", "fumble", "interception", "missed field goal"]
         
         if drive.result == "punt":
             self.change_type = "punt"
             self.ball_on = drive.ending_field_position
             self.__flip_possession()
+            
         elif drive.result in turnover_types:
             self.change_type = "turnover"
             self.ball_on = drive.turnover_position
             self.__flip_possession()
+            
         elif drive.points > 0:
             self.score[self.possession] += drive.points
             self.change_type = "kickoff"
             self.ball_on = 20
             self.__flip_possession()
+            
         else:
             pass
-                
-
-        
-        
