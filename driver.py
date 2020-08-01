@@ -3,15 +3,6 @@ from fantasy_football_simulation import FootballGame
 
 
 
-
-
-
-
-
-
-
-
-
 game = FootballGame("team a", "team b")
 
 game.play()
