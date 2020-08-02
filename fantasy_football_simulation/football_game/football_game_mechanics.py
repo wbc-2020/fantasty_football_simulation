@@ -1,68 +1,109 @@
 
-from football_play import KickReturnTeam
+from football_drive import FootballDrive
 import numpy as np
 
 
-class ChangeOfPossession:
 
-    def __init__(self, change_type, ball_on, team_w_ball, team_wo_ball):
+
+class ScoreBoard:
+
+    def __init__(self):
+
+        self.score = [0, 0]
+        self.game_length = predict_game_length()
+        self.half = 1
         
-        self.type = "change of possesion"
-        self.change_type = change_type
-        self.ball_on = ball_on
-        self.team_w_ball = team_w_ball
-        self.team_wo_ball = team_wo_ball
+        self._plays_in_half = [self.game_length // 2] * 2
+        self.possession = 0
+        self.ball_on = 20
+        self.change_type = "kickoff"
+        
+        self.drive_log = list() 
+        
+    @property
+    def home_score(self):
+        return self.score[0]
+     
+    @property
+    def away_score(self):
+        return self.score[0]
+        
+    @property
+    def time_in_half(self):
+        return self.plays_in_half > 0
+        
+    @property
+    def plays_in_half(self):
+        return self._plays_in_half[self.half - 1]
+    
+    @plays_in_half.setter
+    def plays_in_half(self, new_plays_in_half):
+        
+        if new_plays_in_half < -1:
+            raise ValueError("Invalid plays in half")
+        self._plays_in_half[self.half - 1] = new_plays_in_half      
+                
+                
+    @property
+    def defense(self):
+        return abs(self.possession - 1)
+        
+class GameManager:
 
-    def change_possession(self):
-
-        turnover_types = ["turnover"]
-
-        if self.change_type == "punt":
-            self.play_call = KickReturnTeam(self.ball_on, self.team_w_ball, self.team_wo_ball, play_type = "punt return")
+    def __init__(self):
+        self.type = "GameManager"
+    
+    def update_scoreboard(self, scoreboard, drive):
+    
+        scoreboard.drive_log.append(drive)
+        scoreboard.plays_in_half -= drive.play_count
+        turnover_types = ["turnover on downs", "fumble", "interception", "missed field goal"]    
+    
+        if drive.result == "punt":
+            scoreboard.change_type = "punt"
+            scoreboard.ball_on = drive.ending_field_position
+            self.__flip_possession(scoreboard)
             
-        elif self.change_type in turnover_types :
-            self.play_call = FlipField(self.ball_on)
-
+        elif drive.result in turnover_types:
+            scoreboard.change_type = "turnover"
+            scoreboard.ball_on = drive.turnover_position
+            self.__flip_possession(scoreboard)
+            
+        elif drive.points > 0:
+            scoreboard.score[scoreboard.possession] += drive.points
+            scoreboard.change_type = "kickoff"
+            self.ball_on = 20
+            self.__flip_possession(scoreboard)
+            
         else:
-            self.play_call = KickReturnTeam(self.ball_on, self.team_w_ball, self.team_wo_ball, play_type = "kickoff return")
+            pass
+    
+    def time_in_half(self, scoreboard):
+        
+        return scoreboard.time_in_half
+    
+    def run_drive(self, scoreboard, matchup):
+        
+        current_drive = FootballDrive(
+            ball_on = scoreboard.ball_on, plays_remain = scoreboard.plays_in_half,
+            change_type = scoreboard.change_type, team_w_ball = matchup[scoreboard.possession], 
+            team_wo_ball = matchup[scoreboard.defense], score = scoreboard.score
+            )
+
+        return current_drive
+
+    def change_half(self, scoreboard):
+        scoreboard.half += 1
+        scoreboard.possession = 1
+        scoreboard.change_type = "kickoff"
+        scoreboard.ball_on = 20
+    
+    def __flip_possession(self, scoreboard):
+
+        scoreboard.possession = abs(scoreboard.possession - 1)
 
 
-class FlipField:
-
-    def __init__(self, ball_on):
-
-        self.ball_on = ball_on
-        self.play_type = "turnover"
-
-    def run_play(self):
-
-        self.ball_on = 100 - self.ball_on
-        self.result = "NA"
-
-
-
-
-def flip_coin():
-
-    return int(np.random.binomial(1, .5, 1))
-
-
-def coin_toss():
-
-        coin_winner = flip_coin()
-
-        possession, defense = predict_coin_decision(coin_winner)
-
-        return [coin_winner, possession, defense]
 
 def predict_game_length():
 
     return 150
-
-
-def predict_coin_decision(coin_winner):
-
-    possession = abs(coin_winner - 1)
-    defense = coin_winner
-
-    return [possession, defense]

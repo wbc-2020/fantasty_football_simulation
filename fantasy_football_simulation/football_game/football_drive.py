@@ -1,9 +1,8 @@
 from play_caller import PlayCaller
-from football_game_mechanics import ChangeOfPossession
+from football_drive_mechanics import ChangeOfPossession
 
 
 class FootballDrive:
-
 
     def __init__(self, ball_on, plays_remain, change_type, team_w_ball, team_wo_ball, score):
         # Public Attributes
@@ -54,7 +53,7 @@ class FootballDrive:
 
         print("Drive Summary\n\n")
         print(f"Drive began from own {self.starting_field_position}")
-        print(f"{self.get_play_count()} plays ending in a {self.result}")
+        print(f"{self.play_count} plays ending in a {self.result}")
         print("\nPlay by Play\n")
         
         for play in self.play_log:
@@ -108,6 +107,7 @@ class FootballDrive:
 
         if self.play_call.play_type != "turnover":
             self.play_log.append(self.play_call)
+            self.plays_remain -= 1
 
         if self.play_call.result == "touchdown":
             self.__touchdown()

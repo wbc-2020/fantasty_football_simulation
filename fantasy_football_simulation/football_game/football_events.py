@@ -1,7 +1,5 @@
 
 
-
-
 class FootballEvent():
     
     def __init__(self):
