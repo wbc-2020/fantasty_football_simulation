@@ -9,7 +9,7 @@ class GameManager:
     def __init__(self):
         self.type = "GameManager"
     
-    def update_scoreboard(self, scoreboard, drive):
+    def update_results(self, scoreboard, drive, football):
     
         scoreboard.drive_log.append(drive)
         scoreboard.plays_in_half -= drive.play_count
@@ -17,18 +17,18 @@ class GameManager:
     
         if drive.result == "punt":
             scoreboard.change_type = "punt"
-            scoreboard.ball_on = drive.ending_field_position
+            football.position = drive.ending_field_position
             self.__flip_possession(scoreboard)
             
         elif drive.result in turnover_types:
             scoreboard.change_type = "turnover"
-            scoreboard.ball_on = drive.turnover_position
+            football.position = drive.turnover_position
             self.__flip_possession(scoreboard)
             
         elif drive.points > 0:
             scoreboard.score[scoreboard.possession] += drive.points
             scoreboard.change_type = "kickoff"
-            self.ball_on = 20
+            football.position = 20
             self.__flip_possession(scoreboard)
             
         else:
@@ -38,27 +38,24 @@ class GameManager:
         
         return scoreboard.time_in_half
     
-    def run_drive(self, scoreboard, matchup):
+    def run_drive(self, scoreboard, matchup, football):
         
-        current_drive = FootballDrive(
+        drive = FootballDrive(
             scoreboard = scoreboard,
-            matchup = matchup
+            matchup = matchup, 
+            football = football
             )
 
-        return current_drive
+        return drive
 
-    def change_half(self, scoreboard):
+    def change_half(self, scoreboard, football):
         scoreboard.half += 1
         scoreboard.possession = 1
         scoreboard.change_type = "kickoff"
-        scoreboard.ball_on = 20
+        football.position = 20
     
     def __flip_possession(self, scoreboard):
 
         scoreboard.possession = abs(scoreboard.possession - 1)
 
 
-
-def predict_game_length():
-
-    return 150

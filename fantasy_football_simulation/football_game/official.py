@@ -1,111 +1,73 @@
-from play_caller import PlayCaller
-from football_drive_mechanics import ChangeOfPossession
-from score_board import ScoreBoard
-from football import Football
+from football_game_mechanics import GameManager
 
 
-class FootballDrive:
+class Official(GameManager):
 
-    def __init__(self, scoreboard, matchup, football):
-        # Public Attribute
-        self.result = "incomplete"
-        self.points = 0
-        self.play_log = list()
-        # Internal attributes
-
-        self.down = 1
-        self.to_gain = 10
-
-        self.play_call = None
-        self.extra_point_play = None
-        self.turnover_position = None
-
-        self.scoreboard = scoreboard
-        self.matchup = matchup
-
-        # Need to modify this, so not property
-        self.plays_remain = scoreboard.plays_in_half
-        self.ball_on = football.position
-
-        self.starting_field_position = self.ball_on
-        self.ending_field_position = self.ball_on
+    def __init(self):
         
-        self.football = football
- 
-    @property
-    def change_type(self):
+        GameManager.__init__(self)
     
-        return self.scoreboard.change_type
+    def flip_field(self, football):
 
-    @property 
-    def team_w_ball(self):
+        football.flip_field()
 
-        return self.matchup[self.scoreboard.possession]
+            
+    
+    def officiate(self, play, football, scoreboard):
+    
+        if play.class_name == "KickReturnTeam":
+            
+            football.position = 100 - football.position - play.kick_length = play.return_yards
+            
+            
+            if football.position > 100:
+                self.play.result = "touchdown"
+                self.play.points = 6
+                scoreboard.score[scoreboard.possession] += 6
+                self.result = "touchdown"
+            else:
+                self.play.result = "drive start"
+                self.play.points = 6
+            
+        elif play_class_name == "RegularTeam":
+            
+            
+        elif play_class_name == "PlaceKickTeam":
+            if play.play_type == "extra point attempt":
+                if play.good:
+                    play.points = 1
+                    play.result = "extra point good"
+            
+                else:
+                    play.points = 0
+                    play.result = "extra point missed"
+        else:
+            if self.good:
+                play.points = 3
+                play.result = "field goal good"
 
-    @property
-    def team_wo_ball(self):
-
-        return self.matchup[self.scoreboard.defense]
-
-    @property
-    def play_count(self):
+            else:
+                play.points = 0
+                playf.result = "field goal missed"
+        else:
+            raise ValueError("Unknown play class type")
+    
+    
+    
+    def play_update_scoreboard(self, scoreboard, play):
+            
         
-        return(len(self.play_log))
 
-    @property
-    def score(self):
-
-        return(self.scoreboard.score)
-
-
-    def run_drive(self):
-
-        self.__change_possession()
-
-        while self.plays_remain > 0 and self.result == "incomplete":
-
-                if self.down > 4:
-                    self.__turnover_on_downs()
-                    break
-
-                self.__call_a_play()
-                
-                if self.play_call == "punt":
-                    self.__punt()
-                    break
-
-                self.__run_a_play()
-
-                self.__update_play_results()
-
-    def drive_summary(self):
-
-        print("Drive Summary\n\n")
-        print(f"Drive began from own {self.starting_field_position}")
-        print(f"{self.play_count} plays ending in a {self.result}")
-        print("\nPlay by Play\n")
         
-        for play in self.play_log:
-            print(f"{play.play_type} play for {play.yards} yards and {play.points} points")
-
-    def __call_a_play(self):
         
-        call = PlayCaller(self.ball_on, self.team_w_ball, self.team_wo_ball)
-        call.call_play(self.ball_on, self.down, self.to_gain)
-        self.play_call = call.play_call
-
-    def __run_a_play(self):
         
-        self.play_call.run_play()
-        self.plays_remain -= 1
-        self.play_log.append(self.play_call)
-
+        
     def __update_play_results(self):
         
-        if self.play_call.result == "touchdown":
+        if self.play.result == "touchdown":
             self.__touchdown()
 
-        elif self.play_call.result == "first down":
+        elif self.play.result == "first down":
             self.__first_down()
 
         elif self.play_call.result == "field goal good":
