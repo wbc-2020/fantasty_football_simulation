@@ -39,14 +39,15 @@ class ScoreBoard:
         
         if new_plays_in_half < -1:
             raise ValueError("Invalid plays in half")
-        self._plays_in_half[self.half - 1] = new_plays_in_half      
-                
+        self._plays_in_half[self.half - 1] = new_plays_in_half                   
                 
     @property
     def defense(self):
         return abs(self.possession - 1)
         
-        
+    def flip_possession(self):
+        self.possession = abs(self.possession - 1)
+            
         
 def predict_game_length():
 

@@ -1,5 +1,4 @@
 from play_caller import PlayCaller
-from football_drive_mechanics import ChangeOfPossession
 from score_board import ScoreBoard
 from football import Football
 
@@ -60,7 +59,8 @@ class FootballDrive:
 
     def run_drive(self):
 
-        self.__change_possession()
+        if self.scoreboard.change_type != "turnover":
+            self.__change_possession()
 
         while self.plays_remain > 0 and self.result == "incomplete":
 
@@ -125,20 +125,18 @@ class FootballDrive:
 
     def __change_possession(self):
         
-        change_of_possession = ChangeOfPossession(self.change_type, self.ball_on, self.team_w_ball, self.team_wo_ball)
-        change_of_possession.change_possession()
+        play = PlayCaller(self.team_w_ball, self.team_wo_ball, self.score)
+        play.call_kick_return(self.football.position, self.change_type)
+        play.play_call.run_play()
 
-        self.play_call = change_of_possession.play_call
-        self.play_call.run_play()
+        self.ball_on = play.play_call.ball_on
+        self.starting_field_position = self.ball_on
 
-        self.ball_on = self.play_call.ball_on
-        self.starting_field_position = self.play_call.ball_on
-
-        if self.play_call.play_type != "turnover":
-            self.play_log.append(self.play_call)
+        if play.play_call.play_type != "turnover":
+            self.play_log.append(play.play_call)
             self.plays_remain -= 1
 
-        if self.play_call.result == "touchdown":
+        if play.play_call.result == "touchdown":
             self.__touchdown()
 
     def __extra_point(self):    

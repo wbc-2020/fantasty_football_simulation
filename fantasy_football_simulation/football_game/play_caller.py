@@ -1,4 +1,4 @@
-from football_play import RegularTeam, PlaceKickTeam
+from football_play import RegularTeam, PlaceKickTeam, KickReturnTeam
 import numpy as np
 
 
@@ -60,4 +60,11 @@ class PlayCaller:
             self.play_call = PlaceKickTeam(self.ball_on, self.team_w_ball, self.team_wo_ball, play_type = "extra point attempt")
         
         
-        
+    def call_kick_return(self, ball_on, play_type):
+    
+        if play_type == "kickoff":
+            self.play_call = KickReturnTeam(ball_on, self.team_w_ball, self.team_wo_ball, play_type = "kickoff return")
+            
+        else:
+            self.play_call = KickReturnTeam(ball_on, self.team_w_ball, self.team_wo_ball, play_type = "punt return")
+            

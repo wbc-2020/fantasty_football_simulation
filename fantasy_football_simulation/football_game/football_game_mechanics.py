@@ -17,19 +17,19 @@ class GameManager:
     
         if drive.result == "punt":
             scoreboard.change_type = "punt"
-            football.position = drive.ending_field_position
-            self.__flip_possession(scoreboard)
+            football.flip_field()
+            scoreboard.flip_possession()
             
         elif drive.result in turnover_types:
             scoreboard.change_type = "turnover"
-            football.position = drive.turnover_position
-            self.__flip_possession(scoreboard)
+            football.flip_field()
+            scoreboard.flip_possession()
             
         elif drive.points > 0:
             scoreboard.score[scoreboard.possession] += drive.points
             scoreboard.change_type = "kickoff"
             football.position = 20
-            self.__flip_possession(scoreboard)
+            scoreboard.flip_possession()
             
         else:
             pass
@@ -54,8 +54,6 @@ class GameManager:
         scoreboard.change_type = "kickoff"
         football.position = 20
     
-    def __flip_possession(self, scoreboard):
 
-        scoreboard.possession = abs(scoreboard.possession - 1)
 
 
