@@ -1,33 +1,59 @@
 from play_caller import PlayCaller
 from football_drive_mechanics import ChangeOfPossession
+from score_board import ScoreBoard
 
 
 class FootballDrive:
 
-    def __init__(self, ball_on, plays_remain, change_type, team_w_ball, team_wo_ball, score):
-        # Public Attributes
-        self.team_w_ball = team_w_ball
-        self.team_wo_ball = team_wo_ball
-        self.starting_field_position = ball_on
-        self.ending_field_position = ball_on
+    def __init__(self, scoreboard, matchup):
+        # Public Attribute
         self.result = "incomplete"
         self.points = 0
         self.play_log = list()
-        self.score = score
         # Internal attributes
-        self.change_type = change_type
-        self.plays_remain = plays_remain
+
         self.down = 1
         self.to_gain = 10
-        self.ball_on = ball_on
+
         self.play_call = None
         self.extra_point_play = None
         self.turnover_position = None
+
+        self.scoreboard = scoreboard
+        self.matchup = matchup
+
+        # Need to modify this, so not property
+        self.plays_remain = scoreboard.plays_in_half
+        self.ball_on = scoreboard.ball_on
+
+        self.starting_field_position = self.ball_on
+        self.ending_field_position = self.ball_on
+ 
+    @property
+    def change_type(self):
+    
+        return self.scoreboard.change_type
+
+    @property 
+    def team_w_ball(self):
+
+        return self.matchup[self.scoreboard.possession]
+
+    @property
+    def team_wo_ball(self):
+
+        return self.matchup[self.scoreboard.defense]
 
     @property
     def play_count(self):
         
         return(len(self.play_log))
+
+    @property
+    def score(self):
+
+        return(self.scoreboard.score)
+
 
     def run_drive(self):
 

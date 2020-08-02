@@ -14,20 +14,8 @@ from football_events import *
 
 
 
+game = FootballGame("a", "b", "New York")
 
-result = [0, 0, 0]
-
-
-for i in range(1, 100001):
-    game = FootballGame("a", "b", "New York")
-
-    game.play()
+game.play()
     
-    if game.score[0] > game.score[1]:
-        result[0] += 1
-    elif game.score[0] < game.score[1]:
-        result[1] += 1
-    else:
-        result[2] += 1
-
-print(result)
+game.game_drive_summary()
