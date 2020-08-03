@@ -7,6 +7,9 @@ class DriveResult:
 
     def __init__(self):
         self._result = "incomplete"
+        self._points = None
+        self._starting_field_position = None
+        self._ending_field_position = None
         
     def is_incomplete(self):
         
@@ -35,9 +38,6 @@ class FootballDrive:
         self.play_log = list()
         # Internal attributes
 
-        self.down = 1
-        self.to_gain = 10
-
         self.play_call = None
         self.extra_point_play = None
         self.turnover_position = None
@@ -54,21 +54,23 @@ class FootballDrive:
         
         self.football = football
         self.official = Official()
- 
+        
+        self.team_w_ball = self.matchup[self.scoreboard.possession]
+        self.team_wo_ball = self.matchup[self.scoreboard.defense]
+        
+    @property
+    def down(self):
+        return self.scoreboard.down
+        
+    @property
+    def to_gain(self):
+        return self.scoreboard.to_gain
+    
+    
     @property
     def change_type(self):
     
         return self.scoreboard.change_type
-
-    @property 
-    def team_w_ball(self):
-
-        return self.matchup[self.scoreboard.possession]
-
-    @property
-    def team_wo_ball(self):
-
-        return self.matchup[self.scoreboard.defense]
 
     @property
     def play_count(self):
@@ -79,7 +81,6 @@ class FootballDrive:
     def score(self):
 
         return(self.scoreboard.score)
-
 
     def run_drive(self):
 
@@ -102,7 +103,7 @@ class FootballDrive:
                 
        
                 self.official.officiate(play = self.play_call, football = self.football, 
-                    scoreboard = self.scoreboard, drive_result = self.result, to_gain = self.to_gain)
+                    scoreboard = self.scoreboard, drive_result = self.result)
 
                 self.play_log.append(self.play_call)
                 
@@ -135,7 +136,7 @@ class FootballDrive:
         if self.play_call.result == "touchdown":
             self.__touchdown()
 
-        elif self.play_call.result == "first down":
+        elif self.play_call.result == "first down": 
             self.__first_down()
 
         elif self.play_call.result == "field goal good":
@@ -220,12 +221,8 @@ class FootballDrive:
 
     def __first_down(self):
         
-        self.down = 1
-        self.to_gain = 10
         self.ball_on += self.play_call.yards
 
     def __next_play(self):
         
-        self.down+= 1
-        self.to_gain -= self.play_call.yards
         self.ball_on += self.play_call.yards

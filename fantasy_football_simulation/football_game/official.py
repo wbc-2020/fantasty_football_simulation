@@ -11,9 +11,8 @@ class Official:
 
         football.flip_field()
 
-            
-    
-    def officiate(self, play, football, scoreboard, drive_result, to_gain = None):
+
+    def officiate(self, play, football, scoreboard, drive_result):
   
         if play.class_type == "KickReturnTeam":  
             football.position = 100 - football.position - play.kick_length + play.return_yards
@@ -35,15 +34,18 @@ class Official:
                 play.points = 6
                 drive_result.result = "touchdown"
             
-            elif to_gain - play.yards <= 0:
+            elif scoreboard.to_gain - play.yards <= 0:
                 play.result = "first down"
                 play.points = 0
                 football.position += play.yards
+                scoreboard.first_down()
             
             else:
                 play.result = "next down"
                 play.points = 0
                 football.position += play.yards
+                scoreboard.down += 1
+                scoreboard.to_gain -= play.yards
             
         elif play.class_type == "PlaceKickTeam":
             

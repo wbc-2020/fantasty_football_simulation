@@ -18,6 +18,8 @@ class ScoreBoard:
         
         self.drive_log = list() 
         
+        self.down = 1
+        self.to_gain = 10
     @property
     def home_score(self):
         return self.score[0]
@@ -47,7 +49,12 @@ class ScoreBoard:
         
     def flip_possession(self):
         self.possession = abs(self.possession - 1)
-            
+        self.first_down()
+
+        
+    def first_down(self):
+        self.down = 1
+        self.to_gain = 10
         
 def predict_game_length():
 
