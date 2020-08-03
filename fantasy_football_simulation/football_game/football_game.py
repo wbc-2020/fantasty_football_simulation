@@ -5,8 +5,9 @@ This module implements a simulation of a football game using NFL rules.
 """
 
 import numpy as np
-from football_game_mechanics import ScoreBoard, GameManager
+from game_manager import GameManager
 from football import Football
+from score_board import ScoreBoard
 
 
 class FootballGame:
