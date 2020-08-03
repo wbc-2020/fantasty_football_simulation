@@ -15,12 +15,12 @@ class GameManager:
         scoreboard.plays_in_half -= drive.play_count
         turnover_types = ["turnover on downs", "fumble", "interception", "missed field goal"]    
     
-        if drive.result == "punt":
+        if drive.result.result == "punt":
             scoreboard.change_type = "punt"
             football.flip_field()
             scoreboard.flip_possession()
             
-        elif drive.result in turnover_types:
+        elif drive.result.result in turnover_types:
             scoreboard.change_type = "turnover"
             football.flip_field()
             scoreboard.flip_possession()

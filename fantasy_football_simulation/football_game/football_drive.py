@@ -1,13 +1,36 @@
 from play_caller import PlayCaller
 from score_board import ScoreBoard
 from football import Football
+from official import Official
 
+class DriveResult:
 
+    def __init__(self):
+        self._result = "incomplete"
+        
+    def is_incomplete(self):
+        
+        if self.result == "incomplete":
+           return True
+           
+        else:
+            return False
+    
+    @property
+    def result(self):
+    
+        return self._result
+            
+    @result.setter
+    def result(self, new_result):
+    
+        self._result = new_result
+    
 class FootballDrive:
 
     def __init__(self, scoreboard, matchup, football):
         # Public Attribute
-        self.result = "incomplete"
+        self.result = DriveResult()
         self.points = 0
         self.play_log = list()
         # Internal attributes
@@ -23,13 +46,14 @@ class FootballDrive:
         self.matchup = matchup
 
         # Need to modify this, so not property
-        self.plays_remain = scoreboard.plays_in_half
+        self.plays_remain = abs(scoreboard.plays_in_half)
         self.ball_on = football.position
 
         self.starting_field_position = self.ball_on
         self.ending_field_position = self.ball_on
         
         self.football = football
+        self.official = Official()
  
     @property
     def change_type(self):
@@ -61,8 +85,8 @@ class FootballDrive:
 
         if self.scoreboard.change_type != "turnover":
             self.__change_possession()
-
-        while self.plays_remain > 0 and self.result == "incomplete":
+      
+        while self.plays_remain > 0 and self.result.is_incomplete():
 
                 if self.down > 4:
                     self.__turnover_on_downs()
@@ -75,7 +99,13 @@ class FootballDrive:
                     break
 
                 self.__run_a_play()
+                
+       
+                self.official.officiate(play = self.play_call, football = self.football, 
+                    scoreboard = self.scoreboard, drive_result = self.result, to_gain = self.to_gain)
 
+                self.play_log.append(self.play_call)
+                
                 self.__update_play_results()
 
     def drive_summary(self):
@@ -98,7 +128,7 @@ class FootballDrive:
         
         self.play_call.run_play()
         self.plays_remain -= 1
-        self.play_log.append(self.play_call)
+        
 
     def __update_play_results(self):
         
@@ -142,50 +172,49 @@ class FootballDrive:
     def __extra_point(self):    
         
         play_caller = PlayCaller(self.team_w_ball, self.team_wo_ball, self.score)
-        play_caller.call_extra_point(self.ball_on)
+        play_caller.call_extra_point()
         self.extra_point_play = play_caller.play_call
 
         self.extra_point_play.run_play()
+        
+        self.official.officiate(play = self.extra_point_play, football = self.football, 
+                    scoreboard = self.scoreboard, drive_result = self.result)
+        
         self.points += self.extra_point_play.points
         self.play_log.append(self.extra_point_play)
 
     def __touchdown(self):
         
         self.points = 6
-        self.result = "touchdown"
-        self.ending_field_position = 100
+        self.ending_field_position = self.football.position
         self.__extra_point()
 
     def __punt(self):
         
-        self.result = "punt"
+        self.result.result = "punt"
         self.ending_field_position = self.ball_on
 
     def __turnover_on_downs(self):
         
-        self.result = "turnover on downs"
-        self.turnover_position = self.ball_on
+        self.result.result = "turnover on downs"
+        self.turnover_position = self.football.position
 
     def __field_goal_good(self):
         
         self.points = 3
-        self.result = "field goal"
         self.ending_field_position = 100
 
     def __field_goal_missed(self):
         
-        self.result = "missed field goal"
-        self.ending_field_position = self.ball_on
+        self.ending_field_position = self.football.position
 
     def __fumble(self):
         
-        self.result = "fumble"
         # May have return
         self.ending_field_position = self.ball_on + self.yards
 
     def __interception(self):
         
-        self.result = "interception"
         # May have return
         self.ending_field_position = self.ball_on + self.yards
 
@@ -194,11 +223,9 @@ class FootballDrive:
         self.down = 1
         self.to_gain = 10
         self.ball_on += self.play_call.yards
-        self.ending_field_position = self.ball_on
 
     def __next_play(self):
         
         self.down+= 1
         self.to_gain -= self.play_call.yards
         self.ball_on += self.play_call.yards
-        self.ending_field_position += self.play_call.yards

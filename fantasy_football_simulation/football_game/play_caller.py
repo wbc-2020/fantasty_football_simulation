@@ -48,16 +48,16 @@ class PlayCaller:
                 self.play_call = RegularTeam(self.ball_on, self.down, self.to_gain, 
                                              self.team_w_ball, self.team_wo_ball, play_type = "pass attempt")
 
-    def call_extra_point(self, ball_on):
+    def call_extra_point(self):
 
-        self.ball_on = ball_on
+        ball_on = 20
         go_for_two = False
 
         if go_for_two:
             self.call_play(98, 1, 2)
 
         else:
-            self.play_call = PlaceKickTeam(self.ball_on, self.team_w_ball, self.team_wo_ball, play_type = "extra point attempt")
+            self.play_call = PlaceKickTeam(ball_on, self.team_w_ball, self.team_wo_ball, play_type = "extra point attempt")
         
         
     def call_kick_return(self, ball_on, play_type):

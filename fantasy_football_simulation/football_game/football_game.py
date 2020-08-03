@@ -97,11 +97,12 @@ class FootballGame:
         
     def game_drive_summary(self):
     
+       
         print("\n\n         ****GAME SUMMARY****\n\n")
         print(f"Final Score: {self.home_team} - {self.score[0]}\n             {self.away_team} - {self.score_board.score[1]}")
         for drive in self.score_board.drive_log:
 
-            print(f"{drive.team_w_ball} : Drive resulted in a {drive.result}")
+            print(f"{drive.team_w_ball} : Drive resulted in a {drive.result.result}")
             print(f"{drive.play_count} plays for {drive.points} points")
 
 

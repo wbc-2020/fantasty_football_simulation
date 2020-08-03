@@ -8,12 +8,13 @@ class FootballPlay(object):
     def __init__(self, ball_on, team_w_ball, team_wo_ball, play_type):
 
         self._ball_on = ball_on
-        self._points = 0
         self.team_w_ball = team_w_ball
         self.team_wo_ball = team_wo_ball
         self.outcome = PredictPlay(ball_on, team_w_ball, team_wo_ball, play_type)
-        self.result = "not yet run"
         self.play_type = play_type
+        self._result = None
+        self._points = None
+        
 
     @property
     def ball_on(self):
@@ -33,18 +34,32 @@ class FootballPlay(object):
 
     @points.setter
     def points(self, new_points):
-        if new_points < 0:
+        if new_points not in [0, 1, 2, 3, 6]:
             raise ValueError("Invalid points")
         self._points = new_points
+
+    @property
+    def result(self):
+
+        return self._result
+ 
+    @result.setter
+    def result(self, new_result):
+
+        self._result = new_result
 
     @property
     def event_flag(self):
         return self.outcome.event_flag
 
     def run_play(self):
-        self.outcome.predict()
-        self._evaluate_play()    
+        self.outcome.predict()   
+
+    def label_result(self, result):
+    
+        self.result = result
         
+    
 # Children of FootballPlay
 class RegularTeam(FootballPlay):
 
@@ -54,31 +69,18 @@ class RegularTeam(FootballPlay):
         FootballPlay.__init__(self, ball_on, team_w_ball, team_wo_ball, play_type)
         self.down = down
         self.to_gain = to_gain
+        self.class_type = "RegularTeam"
         
     @property
     def yards(self):
         return self.outcome.gain
-
-    def _evaluate_play(self):
-
-        if self.ball_on + self.yards >= 100:
-            self.result = "touchdown"
-            self.points = 6
-            
-        elif self.to_gain - self.yards <= 0:
-            self.result = "first down"
-            self.points = 0
-            
-        else:
-            self.result = "next down"
-            self.points = 0
-
 
 class KickReturnTeam(FootballPlay):
 
     def __init__(self, ball_on, team_w_ball, team_wo_ball, play_type):
 
         FootballPlay.__init__(self, ball_on, team_w_ball, team_wo_ball, play_type)
+        self.class_type = "KickReturnTeam"
 
     # Used by higher level classes
     @property
@@ -95,23 +97,13 @@ class KickReturnTeam(FootballPlay):
     
         return self.outcome.return_yards
         
-    def _evaluate_play(self):
-
-        self.ball_on = 100 - self.ball_on - self.kick_length + self.return_yards
-
-        if self.ball_on >= 100:
-            self.points = 6
-            self.result = "touchdown"
-
-        self.points = 0
-        self.result = "drive start"
-
 
 class PlaceKickTeam(FootballPlay):
 
     def __init__(self, ball_on, team_w_ball, team_wo_ball, play_type):
 
         FootballPlay.__init__(self, ball_on, team_w_ball, team_wo_ball, play_type)
+        self.class_type = "PlaceKickTeam"
         kick_length = 100 - self.ball_on + 25 
 
     @property
@@ -124,21 +116,5 @@ class PlaceKickTeam(FootballPlay):
 
         return self.outcome.good
 
-    def _evaluate_play(self):
 
-        if self.play_type == "extra point attempt":
-            if self.good:
-                self.points = 1
-            
-            else:
-                self.points = 0
-
-        else:
-            if self.good:
-                self.points = 3
-                self.result = "field goal good"
-
-            else:
-                self.points = 0
-                self.result = "field goal missed"
 
