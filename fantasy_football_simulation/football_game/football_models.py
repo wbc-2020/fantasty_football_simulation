@@ -83,7 +83,7 @@ class PredictPlay:
 
     def __predict_kick_return(self):
 
-        max_kick_length = 100 - self.ball_on
+        max_kick_length = 101 - self.ball_on
 
         self.kick_length = 60
 
@@ -92,14 +92,14 @@ class PredictPlay:
 
         self.return_yards = 5
 
-        ball_on = 100 - self.ball_on - self.kick_length + self.return_yards
+        ball_on = 101 - self.ball_on - self.kick_length + self.return_yards
 
-        if ball_on >= 100:
-            self.return_yards = 100 - self.ball_on - self.kick_length
+        if ball_on > 101:
+            self.return_yards = 101 - self.ball_on - self.kick_length
 
     def __predict_punt_return(self):
 
-        max_kick_length = 100 - self.ball_on
+        max_kick_length = 101 - self.ball_on
 
         self.kick_length = 40
 
@@ -108,10 +108,10 @@ class PredictPlay:
 
         self.return_yards = 5
 
-        ball_on = 100 - self.ball_on - self.kick_length + self.return_yards
+        ball_on = 101 - self.ball_on - self.kick_length + self.return_yards
 
-        if ball_on >= 100:
-            self.return_yards = 100 - self.ball_on - self.kick_length
+        if ball_on >= 101:
+            self.return_yards = 101 - self.ball_on - self.kick_length
 
     def __predict_field_goal(self):
 
@@ -126,39 +126,10 @@ class PredictPlay:
     # Class helper functions
     def __check_gain(self, gain):
 
-        if self.ball_on + gain >= 100:
-            self.gain = 100 - self.ball_on
-
+        if self.ball_on + gain > 101:
+            self.gain = 101 - self.ball_on
+        elif self.ball_on + gain < -1: 
+            self.gain = -1 - self.ball_on
         else: 
             self.gain = gain
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-def predict_extra_point():
-    good = True
-    result = "field goal good"
-    
-    return [good, result]
-
-def predict_two_point():    
-    pass
     

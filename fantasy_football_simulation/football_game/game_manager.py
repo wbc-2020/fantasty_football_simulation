@@ -12,7 +12,6 @@ class GameManager:
     def update_results(self, scoreboard, drive, football):
     
         scoreboard.drive_log.append(drive)
-        scoreboard.plays_in_half -= drive.play_count
         turnover_types = ["turnover on downs", "fumble", "interception", "missed field goal"]    
     
         if drive.result.result == "punt":
@@ -25,11 +24,17 @@ class GameManager:
             football.flip_field()
             scoreboard.flip_possession()
             
-        elif drive.points > 0:
-            scoreboard.score[scoreboard.possession] += drive.points
+        elif drive.result.points > 0:
+            scoreboard.score[scoreboard.possession] += drive.result.points
             scoreboard.change_type = "kickoff"
             football.position = 20
             scoreboard.flip_possession()
+ 
+        elif drive.result.result == "safety":
+            scoreboard.safety()
+            scoreboard.change_type  = "punt"
+            football.position = 20
+            scoreboard.flip_possession
             
         else:
             pass

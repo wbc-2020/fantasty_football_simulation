@@ -22,6 +22,4 @@ class Football:
 
     def flip_field(self):
         
-        if 100 - self.position < 0 or 100 - self.position > 100:
-            raise ValueError("What kinda ball position is this??")
-        self.position = 100 - self.position        
+        self._position = 101 - self._position        

@@ -104,6 +104,6 @@ class FootballGame:
         for drive in self.score_board.drive_log:
 
             print(f"{drive.team_w_ball} : Drive resulted in a {drive.result.result}")
-            print(f"{drive.play_count} plays for {drive.points} points")
+            print(f"{drive.play_count} plays for {drive.result.points} points")
 
 
