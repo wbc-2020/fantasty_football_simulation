@@ -14,6 +14,7 @@ class FootballPlay(object):
         self.play_type = play_type
         self._result = None
         self._points = None
+        self.turnover = False
         
 
     @property

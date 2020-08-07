@@ -1,9 +1,20 @@
-
-
-
-
+#!/usr/bin/env python
 
 class Football:
+    """Tracks position of football on field
+    Parameters
+    ----------
+    none
+    
+    Attributes
+    ----------
+    position (int) position of football on field
+    
+    Methods
+    -------
+    flip_field : flip the field between possessions
+    
+    """
 
     def __init__(self):
     

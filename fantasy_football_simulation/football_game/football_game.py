@@ -5,9 +5,10 @@ This module implements a simulation of a football game using NFL rules.
 """
 
 import numpy as np
-from game_manager import GameManager
 from football import Football
 from score_board import ScoreBoard
+from official import Official
+from football_drive import FootballDrive
 
 
 class FootballGame:
@@ -62,8 +63,8 @@ class FootballGame:
         self.date = "TBD"
      
         self.scoreboard = ScoreBoard()
-        self.game_manager = GameManager()
         self.football = Football()
+        self.official = Official()
     
     
     @property
@@ -86,15 +87,15 @@ class FootballGame:
 
             while self.scoreboard.plays_in_half > 0:
 
-                current_drive = self.game_manager.run_drive(self.scoreboard, self.matchup, self.football) 
-                
+                current_drive = FootballDrive(self.scoreboard, self.matchup, self.football)
+
                 current_drive.run_drive()
-                
+
                 self.scoreboard.drive_log.append(current_drive)
 
             if half == 1:
 
-                self.game_manager.change_half(self.scoreboard, self.football)
+                self.official.change_half(self.scoreboard, self.football)
         
     def game_drive_summary(self):
     

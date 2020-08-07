@@ -19,9 +19,7 @@ class GameManager:
 
         return drive
 
-    def change_half(self, scoreboard, football):
-        scoreboard.change_half()
-        football.position = 20
+
     
 
 

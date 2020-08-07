@@ -13,6 +13,9 @@ class PredictPlay:
         self.event_log = list()
         self.kick_length = None
         self.return_yards = None
+        
+        self.p_interception = 0
+        self.p_fumble = 0
 
     @property
     def ball_on(self):
@@ -27,6 +30,8 @@ class PredictPlay:
         self._ball_on = new_ball_on
 
     def predict(self):
+        
+        self.turnover = False
         
         if self.play_type == "run attempt":
             self.__predict_run()

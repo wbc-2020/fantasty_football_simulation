@@ -78,14 +78,15 @@ class FootballDrive:
                     self.official.punt(self.football, self.scoreboard, self.result)
                     break
 
-                self.__run_a_play()
+                self.play_call.run_play()
                      
                 self.official.officiate(play = self.play_call, football = self.football, 
                     scoreboard = self.scoreboard, drive_result = self.result)
 
                 self.play_log.append(self.play_call)
                 
-                self.__update_play_results()
+                if self.play_call.result == "touchdown":
+                    self.__extra_point()
 
     def drive_summary(self):
 
@@ -102,17 +103,6 @@ class FootballDrive:
         call = PlayCaller(self.football.position, self.team_w_ball, self.team_wo_ball)
         call.call_play(self.football.position, self.scoreboard.down, self.scoreboard.to_gain)
         self.play_call = call.play_call
-
-    def __run_a_play(self):
-        
-        self.play_call.run_play()
-
-        
-
-    def __update_play_results(self):
-        
-        if self.play_call.result == "touchdown":
-            self.__extra_point()
 
     def __change_possession(self):
         
