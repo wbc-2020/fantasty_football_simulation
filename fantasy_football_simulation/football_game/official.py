@@ -28,6 +28,7 @@ class Official:
                 drive_result.points = 6
                 drive_result.ending_field_position = 100
                 drive_result.result = "touchdown"
+                scoreboard.add_touchdown()
 
             else:
                 play.result = "drive start"
@@ -43,11 +44,19 @@ class Official:
                 drive_result.points = 6
                 drive_result.ending_field_position = 100
                 drive_result.result = "touchdown"
+                scoreboard.add_touchdown()
+                scoreboard.change_type = "kickoff"
+                football.position = 20
+                scoreboard.flip_possession()
 
             elif football.position + play.yards < 0:
                 play.result = "safety"
                 drive_result.ending_field_position = -1
                 drive_result.result = "safety"
+                scoreboard.add_safety()
+                scoreboard.change_type  = "punt"
+                football.position = 20
+                scoreboard.flip_possession
 
             elif scoreboard.to_gain - play.yards <= 0:
                 play.result = "first down"
@@ -59,7 +68,10 @@ class Official:
                 play.result = "turnover on downs"
                 football.position += play.yards
                 drive_result.ending_field_position = football.position
-                drive_result.result = "turnover on downs"                 
+                drive_result.result = "turnover on downs"  
+                scoreboard.change_type = "turnover"
+                football.flip_field()
+                scoreboard.flip_possession()                
 
             else:
                 play.result = "next down"
@@ -75,7 +87,7 @@ class Official:
                 if play.good:
                     play.points = 1
                     play.result = "extra point good"
-                    drive_result.points += 1
+                    scoreboard.add_extra_point()
 
                 else:
                     play.points = 0
@@ -88,6 +100,10 @@ class Official:
                     drive_result.ending_field_position = football.position
                     play.result = "field goal good"
                     drive_result.result = "field goal"
+                    scoreboard.add_field_goal()
+                    scoreboard.change_type = "kickoff"
+                    football.position = 20
+                    scoreboard.flip_possession()
 
                 else:
                     play.points = 0
@@ -95,11 +111,21 @@ class Official:
                     drive_result.ending_field_position = football.position
                     play.result = "field goal missed"
                     drive_result.result = "missed field goal"
+                    scoreboard.change_type = "turnover"
+                    football.flip_field()
+                    scoreboard.flip_possession()
         else:
             raise ValueError("Unknown play class type")
+    
+    
+    
+    
     
     def punt(self, football, scoreboard, drive_result):
        
         drive_result.ending_field_position = football.position
         drive_result.result = "punt"
+        scoreboard.change_type = "punt"
+        football.flip_field()
+        scoreboard.flip_possession()
     

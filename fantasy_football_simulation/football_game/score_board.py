@@ -12,7 +12,7 @@ class ScoreBoard:
         self.half = 1
         
         self._plays_in_half = [self.game_length // 2] * 2
-        self.possession = 0
+        self._possession = 0
         self.ball_on = 20
         self.change_type = "kickoff"
         
@@ -20,10 +20,25 @@ class ScoreBoard:
         
         self.down = 1
         self.to_gain = 10
+    
     @property
     def home_score(self):
         return self.score[0]
      
+    @property
+    def possession(self):
+    
+        return(self._possession)
+    
+    @possession.setter
+    def possession(self, new_possession):
+    
+        if new_possession not in [0, 1]:
+            print(f"Invalid possesion of : {new_possession}")
+            raise ValueError("Invalid possesion")
+
+        self._possession = new_possession
+
     @property
     def away_score(self):
         return self.score[1]
@@ -48,10 +63,26 @@ class ScoreBoard:
         return abs(self.possession - 1)
      
     # Methods
+    def _add_points(self, side, points):
+    
+        self.score[side] += points
+    
+    
+    def add_safety(self):
 
-    def safety(self):
+        self._add_points(self.defense, 2) 
+        
+    def add_touchdown(self):
 
-        self.score[self.defense] += 2
+        self._add_points(self.possession, 6)
+        
+    def add_field_goal(self):
+       
+        self._add_points(self.possession, 3)
+        
+    def add_extra_point(self):
+    
+        self._add_points(self.possession, 1)
 
     def flip_possession(self):
         self.possession = abs(self.possession - 1)
@@ -65,6 +96,11 @@ class ScoreBoard:
         
         self.plays_in_half -= 1
 
+    def change_half(self):
+    
+        self.half += 1
+        self.possession = 1
+        self.change_type = "kickoff"
     
 def predict_game_length():
 

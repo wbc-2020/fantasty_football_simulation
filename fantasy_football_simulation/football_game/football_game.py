@@ -61,7 +61,7 @@ class FootballGame:
         self.location = location
         self.date = "TBD"
      
-        self.score_board = ScoreBoard()
+        self.scoreboard = ScoreBoard()
         self.game_manager = GameManager()
         self.football = Football()
     
@@ -69,7 +69,7 @@ class FootballGame:
     @property
     def score(self):
 
-        return self.score_board.score
+        return self.scoreboard.score
 
     @property
     def matchup(self):
@@ -84,24 +84,25 @@ class FootballGame:
 
         for half in range(1, 3):
 
-            while self.score_board.plays_in_half > 0:
+            while self.scoreboard.plays_in_half > 0:
 
-                current_drive = self.game_manager.run_drive(self.score_board, self.matchup, self.football) 
+                current_drive = self.game_manager.run_drive(self.scoreboard, self.matchup, self.football) 
                 
                 current_drive.run_drive()
-
-                self.game_manager.update_results(self.score_board, current_drive, self.football)
+                
+                self.scoreboard.drive_log.append(current_drive)
 
             if half == 1:
 
-                self.game_manager.change_half(self.score_board, self.football)
+                self.game_manager.change_half(self.scoreboard, self.football)
         
     def game_drive_summary(self):
     
        
         print("\n\n         ****GAME SUMMARY****\n\n")
-        print(f"Final Score: {self.home_team} - {self.score[0]}\n             {self.away_team} - {self.score_board.score[1]}")
-        for drive in self.score_board.drive_log:
+        print(f"Final Score: {self.home_team} - {self.score[0]}\n             {self.away_team} - {self.scoreboard.score[1]}")
+        
+        for drive in self.scoreboard.drive_log:
 
             print(f"{drive.team_w_ball} : Drive resulted in a {drive.result.result}")
             print(f"{drive.play_count} plays for {drive.result.points} points")
